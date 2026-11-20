@@ -2021,13 +2021,18 @@ public class PlanComponent extends JComponent implements PlanView, Scrollable, P
       return NO_SUCH_PAGE;
     }
     Level selectedLevel = this.home.getSelectedLevel();
+    // Changing selected level deselects items at other levels, so keep selected items to restore them
+    List<Selectable> selectedItems = new ArrayList<Selectable>(this.home.getSelectedItems());
     try {
       // Select temporarily the printed level because the plan is painted at the selected level
       this.home.setSelectedLevel(printedLevels.get(pageIndex / pagesPerLevel));
       return printSelectedLevel(g, pageFormat, pageIndex % pagesPerLevel);
     } finally {
-      // Restore the selected level, even if the page couldn't be printed
+      // Restore the selected level and selected items, even if the page couldn't be printed
       this.home.setSelectedLevel(selectedLevel);
+      if (!selectedItems.equals(this.home.getSelectedItems())) {
+        this.home.setSelectedItems(selectedItems);
+      }
     }
   }
 
